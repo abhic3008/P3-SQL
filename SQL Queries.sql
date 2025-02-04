@@ -1,59 +1,58 @@
-/* Q1- Mention the total no of nations who participated in each olympics game?*/
+/* Q1- Select countries with highest number of universities in the list */
 
-With t1 as
-(select distinct NOC, Games
-from olympics_events
-where Season= 'Summer'
-order by Games
-)
-
-select Games, count(NOC) as no_of_countries
-from t1
-group by Games
-
-
-
-/*Q2- Identify the sport which was played in all summer olympics.*/
-
-    
-	   select Sport, count(distinct Games) as total_games
-          	from olympics_events
-			where Season = 'Summer'
-			  
-           group by Sport
-	  order by total_games desc
-	  limit 5
-
-
-
-/*Q3- Fetch the top 5 athletes who have won the most gold medals */
-
-	  SELECT Name, count( Medal) as total_gold from olympics_events
-	  where Medal= 'Gold'
-	  group by 1
-	  order by total_gold desc
-
-
-
-/*Q4- Which countries have never won gold medal but have won silver/bronze medals? */ 
-     
-select distinct NOC
-from olympics_events
-where Medal in ('Silver', 'Bronze')
-AND NOC not in
-(
-select NOC
-from olympics_events
-where Medal = 'Gold'
-)
-
-
-
-/*Q5- In which Sport/event, India has won highest medals.*/
-
-select Sport, count(Medal) as all_medals
-from olympics_events
-where Medal <> 'NA' and "NOC" = 'IND'
-group by 1
-order by all_medals desc
+select count(*), country from qsdata 
+group by country
+order by 1 desc
 limit 1
+
+
+
+/*Q2- Select Indian universities along with thier rank and city */
+
+select rank_no, university_name, city from qsdata
+where country = 'India'
+
+
+
+/*Q3- Select top 5 Indian universities with highest net flow of students- outbound/inbound ratio(till 2 decimal place) */
+
+select university_name, round(CAST(outbound_exchange/inbound_exchange AS numeric),2) as ratio_n
+from qsdata
+where country = 'India'
+order by 2 desc
+limit 5
+
+/*realised that postgres does not handle automatic conversion from float/real to numeric */
+
+
+
+/*Q4- Select the university with the highest and lowest faculty-student ratio */
+
+(
+ select university_name, faculty_student_ratio from qsdata
+order by faculty_student_ratio desc
+limit 1
+   )
+union all
+(
+ select university_name, faculty_student_ratio from qsdata
+order by faculty_student_ratio asc
+limit 1
+  )
+
+
+
+/*Q5-  Top Indian university with the highest number of international students and compare it with the one with overall highest international students */
+
+(
+  select university_name, international_students, country from qsdata 
+ where country = 'India'
+ order by 2 desc
+ limit 1
+  )
+union all
+(
+ select university_name, international_students,country 
+ from qsdata 
+ where international_students=100
+  )
