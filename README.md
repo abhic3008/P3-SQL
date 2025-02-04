@@ -1,1 +1,1 @@
-# P3-SQL
+Executed SQL queries on a database to analyze QS University Rankings, encompassing various parameters such as research papers, pupil-teacher ratio, international faculty, academic reputation among others.
